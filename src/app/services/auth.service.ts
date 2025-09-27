@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of, throwError } from 'rxjs';
-import { delay, map, catchError } from 'rxjs/operators';
+import { catchError, delay, map } from 'rxjs/operators';
 
 export interface RegistrationData {
   firstName: string;
@@ -27,7 +27,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'asesor' | 'supervisor' | 'admin';
+  role: 'asesor' | 'supervisor' | 'admin' | 'viewer';
   permissions: string[];
   avatarUrl?: string;
 }
@@ -110,6 +110,18 @@ export class AuthService {
           permissions: ['read:clients', 'write:quotes', 'read:reports', 'approve:quotes', 'manage:team'],
           avatarUrl: 'https://picsum.photos/seed/supervisor/100/100'
         }
+      },
+      {
+        email: 'viewer@conductores.com',
+        password: 'viewer123',
+        user: {
+          id: '3',
+          name: 'Viewer Demo',
+          email: 'viewer@conductores.com',
+          role: 'viewer' as const,
+          permissions: ['read:clients', 'read:reports'],
+          avatarUrl: 'https://picsum.photos/seed/viewer/100/100'
+        }
       }
     ];
 
@@ -135,7 +147,7 @@ export class AuthService {
         this.setAuthData(authResponse, credentials.rememberMe);
         return authResponse;
       }),
-      catchError(error => {
+      catchError((error: unknown) => {
         console.error('Login error:', error);
         return throwError(() => new Error('Credenciales incorrectas'));
       })
@@ -223,7 +235,7 @@ export class AuthService {
         this.setAuthData(authResponse);
         return authResponse;
       }),
-      catchError(error => {
+      catchError((error: unknown) => {
         console.error('Token refresh error:', error);
         this.logout();
         return throwError(() => new Error('Token refresh failed'));
@@ -251,7 +263,7 @@ export class AuthService {
         
         return updatedUser;
       }),
-      catchError(error => {
+      catchError((error: unknown) => {
         console.error('Profile update error:', error);
         return throwError(() => new Error('Failed to update profile'));
       })
@@ -272,7 +284,7 @@ export class AuthService {
         }
         throw new Error('Invalid current password or new password too short');
       }),
-      catchError(error => {
+      catchError((error: unknown) => {
         console.error('Password change error:', error);
         return throwError(() => new Error('Failed to change password'));
       })
@@ -409,7 +421,7 @@ export class AuthService {
 
         return response;
       }),
-      catchError(error => {
+      catchError((error: unknown) => {
         console.error('Registration error:', error);
         return throwError(() => error);
       })
@@ -457,7 +469,7 @@ export class AuthService {
 
         return { message, success: true };
       }),
-      catchError(error => {
+      catchError((error: unknown) => {
         console.error('Email verification error:', error);
         return throwError(() => error);
       })
