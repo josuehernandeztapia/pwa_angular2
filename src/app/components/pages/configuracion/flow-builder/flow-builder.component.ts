@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/co
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Subject, takeUntil } from 'rxjs';
+import { FlowsService, FlowDraftBody } from '../../../../services/flows.service';
 
 export interface FlowNode {
   id: string;
@@ -1380,7 +1381,7 @@ export class FlowBuilderComponent implements OnInit, OnDestroy {
 
   @ViewChild('flowCanvas') flowCanvas!: ElementRef<HTMLDivElement>;
 
-  constructor() {}
+  constructor(private flowsService: FlowsService) {}
 
   ngOnInit() {
     // Load saved flow if present; otherwise use sample
@@ -1735,21 +1736,39 @@ export class FlowBuilderComponent implements OnInit, OnDestroy {
     this.selectedConnection = null;
   }
 
+  private currentFlowId: string | null = null;
+  private currentEtag: string | undefined;
+
   saveFlow() {
-    const flowData = {
+    const flowData: FlowDraftBody = {
       nodes: this.nodes,
       connections: this.connections,
       version: '1.0'
     };
-    
-    // Save to localStorage or send to backend
-    localStorage.setItem('flow_builder_data', JSON.stringify(flowData));
-    console.log('Flow saved:', flowData);
+
+    if (!this.currentFlowId) {
+      this.flowsService.create(flowData).pipe(takeUntil(this.destroy$)).subscribe(({ id, etag }) => {
+        this.currentFlowId = id;
+        this.currentEtag = etag;
+        localStorage.setItem('flow_builder_data', JSON.stringify({ id, ...flowData }));
+      });
+    } else {
+      this.flowsService.update(this.currentFlowId, flowData, this.currentEtag).pipe(takeUntil(this.destroy$)).subscribe(({ etag }) => {
+        this.currentEtag = etag || this.currentEtag;
+        localStorage.setItem('flow_builder_data', JSON.stringify({ id: this.currentFlowId, ...flowData }));
+      });
+    }
   }
 
   deployFlow() {
-    this.showGenerationModal = true;
-    this.generateCode();
+    if (!this.currentFlowId) {
+      this.saveFlow();
+      return;
+    }
+    this.flowsService.publish(this.currentFlowId).pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.showGenerationModal = true;
+      this.generateCode();
+    });
   }
 
   closeGenerationModal() {
@@ -1797,6 +1816,17 @@ export class FlowBuilderComponent implements OnInit, OnDestroy {
     this.generatedCode = this.createGeneratedCode();
     this.activeCodeTab = Object.keys(this.generatedCode)[0] || '';
     this.isGenerating = false;
+  }
+
+  validateFlow() {
+    if (!this.currentFlowId) {
+      return;
+    }
+    this.flowsService.validate(this.currentFlowId).pipe(takeUntil(this.destroy$)).subscribe((res) => {
+      if (!res.valid) {
+        alert(`Errores de validación:\n- ${((res.errors || []).join('\n- '))}`);
+      }
+    });
   }
 
   private createGeneratedCode(): { [filename: string]: string } {

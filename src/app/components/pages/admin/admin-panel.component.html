@@ -1,14 +1,53 @@
 <section class="admin">
   <h1>Administración</h1>
-  <button (click)="crearUsuario()">Crear usuario</button>
+
+  <div class="kpis" *ngIf="metrics as m">
+    <div class="kpi">
+      <div class="kpi-title">Total</div>
+      <div class="kpi-value">{{ m.total }}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-title">Activos</div>
+      <div class="kpi-value">{{ m.active }}</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-title">Bloqueados</div>
+      <div class="kpi-value">{{ m.blocked }}</div>
+    </div>
+  </div>
+
+  <button (click)="crearUsuario()" [disabled]="isReadOnly()">Crear usuario</button>
   <ul>
     <li *ngFor="let u of usuarios">
       <span>{{ u.nombre || u.name }} ({{ u.email }})</span>
-      <button (click)="editarUsuario(u)">Editar</button>
-      <button (click)="bloquearUsuario(u)">
+      <button (click)="editarUsuario(u)" [disabled]="isReadOnly()">Editar</button>
+      <button (click)="bloquearUsuario(u)" [disabled]="isReadOnly()">
         {{ u.activo ? 'Bloquear' : 'Desbloquear' }}
       </button>
     </li>
   </ul>
+
+  <h2>Actividad reciente</h2>
+  <table class="logs" *ngIf="activityLogs?.length; else noUserLogs">
+    <thead>
+      <tr>
+        <th>Fecha</th>
+        <th>Usuario</th>
+        <th>Acción</th>
+        <th>Por</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let log of activityLogs">
+        <td>{{ log.timestamp | date:'short' }}</td>
+        <td>{{ log.email }}</td>
+        <td>{{ log.action }}</td>
+        <td>{{ log.performedBy || '-' }}</td>
+      </tr>
+    </tbody>
+  </table>
+  <ng-template #noUserLogs>
+    <p>No hay actividad reciente.</p>
+  </ng-template>
 </section>
 

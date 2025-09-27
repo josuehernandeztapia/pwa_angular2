@@ -7,6 +7,13 @@ export type ContactChannel = 'whatsapp' | 'sms' | 'email' | 'phone';
 export type ContactPurpose = 'delivery' | '30_days' | '90_days' | '6_months' | '12_months' | 'maintenance_reminder' | 'warranty_claim';
 export type ContactOutcome = 'sent' | 'answered' | 'escalated' | 'no_response';
 
+// Optional enums (non-breaking) for richer typing if imported by new code
+export enum ServicePackageEnum { Basic = 'basic', Premium = 'premium', Extended = 'extended' }
+export enum ServiceTypeEnum { Mantenimiento = 'mantenimiento', Reparacion = 'reparacion', Garantia = 'garantia', Revision = 'revision' }
+export enum ContactChannelEnum { Whatsapp = 'whatsapp', Sms = 'sms', Email = 'email', Phone = 'phone' }
+export enum ContactPurposeEnum { Delivery = 'delivery', P30 = '30_days', P90 = '90_days', P6M = '6_months', P12M = '12_months', MaintenanceReminder = 'maintenance_reminder', WarrantyClaim = 'warranty_claim' }
+export enum ContactOutcomeEnum { Sent = 'sent', Answered = 'answered', Escalated = 'escalated', NoResponse = 'no_response' }
+
 // Import milestone status tracking
 export type ImportMilestoneStatus = {
   status?: 'completed' | 'in_progress' | 'pending';
@@ -78,10 +85,10 @@ export interface VehicleUnit {
   serie: string;
   modelo: string;
   year: number;
-  color: 'Blanco'; // Solo blanco por ahora
+  color: 'Blanco' | 'Negro' | 'Rojo' | 'Azul' | 'Gris' | 'Plata';
   numeroMotor: string;
   transmission?: 'Manual' | 'Automatica';
-  fuelType: 'Gasolina'; // Solo gasolina por ahora
+  fuelType: 'Gasolina' | 'Diesel' | 'Hibrido' | 'Electrico';
   assignedAt: Date;
   assignedBy: string; // ID del usuario que asignó
   productionBatch?: string;
