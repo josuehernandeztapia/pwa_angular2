@@ -18,6 +18,21 @@ export class IntegracionesComponent {
   constructor(private integracionesService: IntegracionesService) {}
 
   ngOnInit() {
+    this.refreshAll();
+  }
+
+  toggle(integracion: any) {
+    this.integracionesService.toggleIntegracion(integracion.id).subscribe(() => {
+      this.refreshAll();
+    });
+  }
+
+  get errorCount(): number {
+    const anyMetrics = this.metrics as any;
+    return (this.metrics?.error ?? anyMetrics?.errors ?? 0) as number;
+  }
+
+  private refreshAll() {
     this.integracionesService.getIntegraciones().subscribe((data: any[]) => {
       this.integraciones = data;
     });
@@ -27,10 +42,6 @@ export class IntegracionesComponent {
     this.integracionesService.getRecentLogs(this.logsLimit).subscribe((logs: IntegrationLog[]) => {
       this.recentLogs = logs;
     });
-  }
-
-  toggle(integracion: any) {
-    this.integracionesService.toggleIntegracion(integracion.id).subscribe();
   }
 }
 

@@ -249,7 +249,7 @@ const commonBeforeWildcard: Routes = [
     path: 'administracion',
     loadComponent: () => import('./components/pages/admin/admin-panel.component').then(c => c.AdminPanelComponent),
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['admin'] },
+    data: { roles: ['admin', 'supervisor', 'viewer'] },
     title: 'Administración - Conductores PWA'
   },
 

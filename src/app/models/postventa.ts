@@ -237,3 +237,33 @@ export interface ImportStatus {
   deliveryData?: DeliveryData;
   postSalesRecord?: PostSalesRecord;
 }
+
+// Type guards (basic)
+export function isDocumentFile(value: any): value is DocumentFile {
+  return !!value && typeof value === 'object'
+    && typeof value.filename === 'string'
+    && typeof value.url === 'string'
+    && (value.uploadedAt instanceof Date || typeof value.uploadedAt === 'string')
+    && typeof value.size === 'number'
+    && ['pdf', 'image', 'document'].includes(value.type);
+}
+
+export function isVehicleUnit(value: any): value is VehicleUnit {
+  return !!value && typeof value === 'object'
+    && typeof value.id === 'string'
+    && typeof value.vin === 'string'
+    && typeof value.serie === 'string'
+    && typeof value.modelo === 'string'
+    && typeof value.year === 'number';
+}
+
+export function isPostSalesRecord(value: any): value is PostSalesRecord {
+  return !!value && typeof value === 'object'
+    && typeof value.id === 'string'
+    && typeof value.vin === 'string'
+    && typeof value.clientId === 'string'
+    && (value.warrantyStatus === 'active' || value.warrantyStatus === 'expired')
+    && typeof value.servicePackage === 'string'
+    && typeof value.odometroEntrega === 'number';
+}
+

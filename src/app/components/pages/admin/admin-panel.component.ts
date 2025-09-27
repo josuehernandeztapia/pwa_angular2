@@ -15,8 +15,8 @@ export class AdminPanelComponent {
   activityLogs: UserActivityLog[] = [];
   logsLimit = 20;
   // Simple role handling for demo purposes
-  Role: Record<string, string> = { admin: 'admin', supervisor: 'supervisor', asesor: 'asesor' };
-  currentUserRole: 'admin' | 'supervisor' | 'asesor' = 'asesor';
+  Role: Record<string, string> = { admin: 'admin', supervisor: 'supervisor', asesor: 'asesor', viewer: 'viewer' };
+  currentUserRole: 'admin' | 'supervisor' | 'asesor' | 'viewer' = 'asesor';
 
   constructor(private usuariosService: UsuariosService) {}
 
@@ -31,7 +31,7 @@ export class AdminPanelComponent {
       const userRaw = localStorage.getItem('current_user');
       if (userRaw) {
         const user = JSON.parse(userRaw);
-        if (user?.role && ['admin', 'supervisor', 'asesor'].includes(user.role)) {
+        if (user?.role && ['admin', 'supervisor', 'asesor', 'viewer'].includes(user.role)) {
           this.currentUserRole = user.role;
         }
       }
@@ -52,7 +52,7 @@ export class AdminPanelComponent {
   }
 
   isReadOnly(): boolean {
-    return this.currentUserRole === 'supervisor';
+    return this.currentUserRole === 'supervisor' || this.currentUserRole === 'viewer';
   }
 }
 
