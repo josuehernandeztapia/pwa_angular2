@@ -1,0 +1,14 @@
+<section class="admin">
+  <h1>Administración</h1>
+  <button (click)="crearUsuario()">Crear usuario</button>
+  <ul>
+    <li *ngFor="let u of usuarios">
+      <span>{{ u.nombre || u.name }} ({{ u.email }})</span>
+      <button (click)="editarUsuario(u)">Editar</button>
+      <button (click)="bloquearUsuario(u)">
+        {{ u.activo ? 'Bloquear' : 'Desbloquear' }}
+      </button>
+    </li>
+  </ul>
+</section>
+
