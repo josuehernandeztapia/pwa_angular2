@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from './guards/auth.guard';
 import { environment } from '../environments/environment';
+import { AuthGuard } from './guards/auth.guard';
+import { RoleGuard } from './guards/role.guard';
 
 // Rutas comunes (antes del wildcard)
 const commonBeforeWildcard: Routes = [
@@ -235,6 +236,21 @@ const commonBeforeWildcard: Routes = [
     loadComponent: () => import('./components/pages/reportes/reportes.component').then(c => c.ReportesComponent),
     canActivate: [AuthGuard],
     title: 'Reportes - Conductores PWA'
+  },
+
+  {
+    path: 'integraciones',
+    loadComponent: () => import('./components/pages/integraciones/integraciones.component').then(c => c.IntegracionesComponent),
+    canActivate: [AuthGuard],
+    title: 'Integraciones Externas - Conductores PWA'
+  },
+
+  {
+    path: 'administracion',
+    loadComponent: () => import('./components/pages/admin/admin-panel.component').then(c => c.AdminPanelComponent),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['admin'] },
+    title: 'Administración - Conductores PWA'
   },
 
   // Products catalog

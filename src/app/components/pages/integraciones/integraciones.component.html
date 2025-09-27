@@ -1,0 +1,12 @@
+<section class="integraciones">
+  <h1>Integraciones</h1>
+  <ul>
+    <li *ngFor="let integ of integraciones">
+      <span>{{ integ.nombre || integ.name }}</span>
+      <button (click)="toggle(integ)">
+        {{ integ.activa || integ.enabled ? 'Desactivar' : 'Activar' }}
+      </button>
+    </li>
+  </ul>
+</section>
+
